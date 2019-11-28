@@ -38,10 +38,14 @@ elements = []
 def add():
 	clear()
 	numProcesses = int(numProccessesEntry.get())  # Get the amount of processes entered
+	# lowestY = 0.25 || highestY = 0.65 || range = 0.4
+	# lowestX = 0.049 || highestX = 0.95 || range = 0.9
+	sizeP = int(numProccessesEntry.get())
+	width = 0.9 / sizeP
 
-	for i in range(0,numProcesses):  # Create entry, place it, then and add it into entries list
+	for i in range(0, numProcesses):  # Create entry, place it, then and add it into entries list
 		entry = Entry(upperFrame, bg="#FAFAFA", borderwidth=1, relief="solid", font=("inconsolata", 20), justify=CENTER)
-		entry.place(relx=0.14 + (0.1*i), rely=0.13, relwidth=0.09, relheight=0.15, anchor=E)
+		entry.place(relx=0.049 + (width * i), rely=0.07, relwidth=width + 0.01, relheight=0.15, anchor=NW)
 
 		entries.append(entry)
 
@@ -61,46 +65,51 @@ def execute():
 	frames = int(numFramesEntry.get())  # Get number of frames
 	frameQueue = FrameQueue(frames)  # Create FrameQueue Object
 
-	if algo.get() == "FIFO":
-		counter = 0  # Variable to keep track if PageFault was incremented
-		for i in range(0, len(entries)):  # For each number user enters
+	counter = 0  # Variable to keep track if PageFault was incremented
+
+	# lowestY = 0.25 || highestY = 0.65 || range = 0.4
+	# lowestX = 0.049 || highestX = 0.95 || range = 0.9
+	sizeF = frameQueue.getSize()
+	sizeP = int(numProccessesEntry.get())
+	height = 0.4 / sizeF
+	width = 0.9 / sizeP
+	for i in range(0, len(entries)):  # For each number user enters
+		if algo.get() == "FIFO":
 			frameQueue.fifoE(entries[i].get())  # add number into queue using fifoE method
+		else:
+			frameQueue.lruE(entries[i].get())
 
-			if frameQueue.getPF() == counter:  # if pagefault was not incremented set pf to false
-				pf = False
-			else:  # else indicate that there was a pagefault and increment counter
-				pf = True
-				counter += 1
+		if frameQueue.getPF() == counter:  # if pagefault was not incremented set pf to false
+			pf = False
+		else:  # else indicate that there was a pagefault and increment counter
+			pf = True
+			counter += 1
 
-			for o in range(0, frameQueue.getSize()):  # For update the gui to show whats in the queue
-				queue = frameQueue.getQ()
-				try:
-					element = str(queue[o])
-				except IndexError:
-					element = ""
+		for o in range(0, frameQueue.getSize()):  # For update the gui to show whats in the queue
+			queue = frameQueue.getQ()
+			try:
+				element = str(queue[o])
+			except IndexError:
+				element = ""
 
-				if element == str(entries[i].get()):  # If the element we are going to display is the one entered, check if there was a page fault
-					if pf:  # If there was a pagefault then set the color to red
-						color = "#ff1100"
-					else:  # If there wasnt set the color to green
-						color = "#40de02"
-				else:  # Else set color to black
-					color = "#030303"
+			if element == str(entries[i].get()):  # If the element we are going to display is the one entered, check if there was a page fault
+				if pf:  # If there was a pagefault then set the color to red
+					color = "#ff1100"
+				else:  # If there wasnt set the color to green
+					color = "#40de02"
+			else:  # Else set color to black
+				color = "#030303"
 
-				#  Display all elements in the queue at this given time
-				elementLabel = Label(upperFrame, text=element, borderwidth=1, relief="solid", font=("inconsolata", 20), bg="#FAFAFA", fg=color, anchor=CENTER)
-				if frameQueue.getSize() == 3:
-					elementLabel.place(relx=0.14 + (0.1*i), rely=0.3 + (0.14*o), relwidth=0.09, relheight=0.15, anchor=E)
-				else:
-					elementLabel.place(relx=0.14 + (0.1 * i), rely=0.3 + (0.1 * o), relwidth=0.09, relheight=0.101, anchor=E)
-				elements.append(elementLabel)
+			#  Display all elements in the queue at this given time
 
-		# Display page faults when done
-		pageFaultLabel = Label(root, text="Page Faults: " + str(frameQueue.getPF()), bg="#FAFAFA", font=("inconsolata", 19))\
-			.place(relx=0.77, rely=0.68, relwidth=0.2, relheight=0.07)
-	else:  # LRU algorithm
-		print()
+			elementLabel = Label(upperFrame, text=element, borderwidth=1, relief="solid", font=("inconsolata", 20), bg="#FAFAFA", fg=color, anchor=CENTER)
+			elementLabel.place(relx=0.049 + (width * i), rely=0.25 + (height * o), relwidth=width + 0.01, relheight=height + 0.01, anchor=NW)
 
+			elements.append(elementLabel)
+
+	# Display page faults when done
+	pageFaultLabel = Label(root, text="Page Faults: " + str(frameQueue.getPF()), bg="#FAFAFA", font=("inconsolata", 19))\
+		.place(relx=0.77, rely=0.68, relwidth=0.22, relheight=0.07)
 
 algoList = ["FIFO","LRU"]
 algo = StringVar(root)
