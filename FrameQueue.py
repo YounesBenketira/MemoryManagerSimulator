@@ -23,6 +23,18 @@ class Queue:
 	def __iter__(self):
 		return self._queue.__iter__()
 
+
+''' This Code is to test the logic behind this DataStructure
+nums = [0,1,2,3,0,1,4,0,1,2,3,4]
+letters = ['A','B','C','A','D','A','C','D','B','C','A']
+frameQueue = FrameQueue(4)
+frameQueue.fifo(nums)
+print(frameQueue.getPF())
+frameQueue.lru(letters)
+print(frameQueue.getPF())
+'''
+
+
 class FrameQueue:
 	def __init__(self, size):
 		self._queue = Queue()
@@ -35,12 +47,13 @@ class FrameQueue:
 	def _incPF_(self):
 		self._pageFaults += 1
 
+	#  LRU Algorithm for a list element
 	def lru(self, l):
 		self.clear()
 		for element in l:
 			self.lruE(element)
-			print(element, self._queue._queue)
 
+	#  LRU Algorithm for a single element
 	def lruE(self, element):
 		if element in self._queue:
 			self._queue.remove(element)
@@ -51,12 +64,13 @@ class FrameQueue:
 
 		self._queue.add(element)
 
+	#  FIFO Algorithm for a list element
 	def fifo(self, l):
 		self.clear()
 		for element in l:
 			self.fifoE(element)
-			print(element, self._queue._queue)
 
+	#  FIFO Algorithm for a single element
 	def fifoE(self, element):
 		if element not in self._queue:
 			if self._isMax_():
