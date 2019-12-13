@@ -1,7 +1,7 @@
 # MemoryManagerSimulator
 
 ### **FIFO**  
-![alt text](images/FIFO.img "FIFO")  
+![alt text](Images/FIFO.img "FIFO")  
 
 ### **LRU**  
-![alt text](images/LRU.img "LRU")  
+![alt text](Images/LRU.img "LRU")  
